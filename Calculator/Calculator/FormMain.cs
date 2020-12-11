@@ -12,8 +12,8 @@ namespace Calculator
 {
     public partial class FormMain : Form
     {
-        private double workNumber = 0;
-        private double Number = 0;
+        private double workNumber = 0; //число в TextBox
+        private double number = 0; //временное рабочее число
         public FormMain()
         {
             InitializeComponent();
@@ -21,11 +21,11 @@ namespace Calculator
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            WorkNum.Select();
-            label1.Text = Number.ToString();
+            workNum.Select();
+            labelResult.Text = number.ToString();
         }
 
-        private void WorkNum_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        private void workNum_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
                 (e.KeyChar != '.') && (e.KeyChar != '-'))
@@ -46,15 +46,15 @@ namespace Calculator
 
         }
 
-        private void WorkNum_TextChanged(object sender, EventArgs e)
+        private void workNum_TextChanged(object sender, EventArgs e)
         {
-            workNumber = Convert.ToDouble(WorkNum.Text);
+            workNumber = Convert.ToDouble(workNum.Text);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void plusButton_Click(object sender, EventArgs e)
         {
-            Number += workNumber;
-            label1.Text = Number.ToString();
+            number += workNumber;
+            labelResult.Text = number.ToString();
         }
     }
 }

@@ -28,49 +28,49 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.WorkNum = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.workNum = new System.Windows.Forms.TextBox();
+            this.labelResult = new System.Windows.Forms.Label();
+            this.plusButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // WorkNum
+            // workNum
             // 
-            this.WorkNum.CausesValidation = false;
-            this.WorkNum.Location = new System.Drawing.Point(283, 46);
-            this.WorkNum.Name = "WorkNum";
-            this.WorkNum.Size = new System.Drawing.Size(100, 20);
-            this.WorkNum.TabIndex = 0;
-            this.WorkNum.Text = "0";
-            this.WorkNum.TextChanged += new System.EventHandler(this.WorkNum_TextChanged);
-            this.WorkNum.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.WorkNum_KeyPress);
+            this.workNum.CausesValidation = false;
+            this.workNum.Location = new System.Drawing.Point(283, 46);
+            this.workNum.Name = "WorkNum";
+            this.workNum.Size = new System.Drawing.Size(100, 20);
+            this.workNum.TabIndex = 0;
+            this.workNum.Text = "0";
+            this.workNum.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.workNum_KeyPress);
+            this.workNum.TextChanged += new System.EventHandler(this.workNum_TextChanged);
             // 
-            // label1
+            // labelResult
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(347, 461);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "label1";
+            this.labelResult.AutoSize = true;
+            this.labelResult.Location = new System.Drawing.Point(224, 418);
+            this.labelResult.Name = "labelResult";
+            this.labelResult.Size = new System.Drawing.Size(35, 13);
+            this.labelResult.TabIndex = 1;
+            this.labelResult.Text = "labelResult";
             // 
-            // button1
+            // plusButton
             // 
-            this.button1.Location = new System.Drawing.Point(296, 127);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "+";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.plusButton.Location = new System.Drawing.Point(172, 131);
+            this.plusButton.Name = "plusButton";
+            this.plusButton.Size = new System.Drawing.Size(75, 23);
+            this.plusButton.TabIndex = 2;
+            this.plusButton.Text = "+";
+            this.plusButton.UseVisualStyleBackColor = true;
+            this.plusButton.Click += new System.EventHandler(this.plusButton_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(715, 799);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.WorkNum);
+            this.Controls.Add(this.plusButton);
+            this.Controls.Add(this.labelResult);
+            this.Controls.Add(this.workNum);
             this.Name = "FormMain";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.FormMain_Load);
@@ -81,9 +81,9 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox WorkNum;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox workNum;
+        private System.Windows.Forms.Label labelResult;
+        private System.Windows.Forms.Button plusButton;
     }
 }
 
