@@ -32,6 +32,8 @@
             this.dividedButton = new System.Windows.Forms.Button();
             this.stateNum = new System.Windows.Forms.Label();
             this.statesList = new System.Windows.Forms.ListBox();
+            this.undo = new System.Windows.Forms.Button();
+            this.repeat = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // workNumBox
@@ -99,9 +101,9 @@
             this.stateNum.AutoSize = true;
             this.stateNum.Location = new System.Drawing.Point(546, 22);
             this.stateNum.Name = "stateNum";
-            this.stateNum.Size = new System.Drawing.Size(32, 13);
+            this.stateNum.Size = new System.Drawing.Size(24, 13);
             this.stateNum.TabIndex = 6;
-            this.stateNum.Text = "State";
+            this.stateNum.Text = "0/0";
             // 
             // statesList
             // 
@@ -110,13 +112,35 @@
             this.statesList.Name = "statesList";
             this.statesList.Size = new System.Drawing.Size(120, 95);
             this.statesList.TabIndex = 7;
-            this.statesList.DoubleClick += new System.EventHandler(this.statesList_DoubleClick);
+            this.statesList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.statesList_MouseDoubleClick);
+            // 
+            // undo
+            // 
+            this.undo.Location = new System.Drawing.Point(171, 46);
+            this.undo.Name = "undo";
+            this.undo.Size = new System.Drawing.Size(75, 23);
+            this.undo.TabIndex = 8;
+            this.undo.Text = "UnDo";
+            this.undo.UseVisualStyleBackColor = true;
+            this.undo.Click += new System.EventHandler(this.undo_Click);
+            // 
+            // repeat
+            // 
+            this.repeat.Location = new System.Drawing.Point(415, 46);
+            this.repeat.Name = "repeat";
+            this.repeat.Size = new System.Drawing.Size(75, 23);
+            this.repeat.TabIndex = 9;
+            this.repeat.Text = "Repeat";
+            this.repeat.UseVisualStyleBackColor = true;
+            this.repeat.Click += new System.EventHandler(this.repeat_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(715, 799);
+            this.Controls.Add(this.repeat);
+            this.Controls.Add(this.undo);
             this.Controls.Add(this.statesList);
             this.Controls.Add(this.stateNum);
             this.Controls.Add(this.dividedButton);
@@ -143,6 +167,8 @@
         private System.Windows.Forms.Button dividedButton;
         private System.Windows.Forms.Label stateNum;
         private System.Windows.Forms.ListBox statesList;
+        private System.Windows.Forms.Button undo;
+        private System.Windows.Forms.Button repeat;
     }
 }
 
