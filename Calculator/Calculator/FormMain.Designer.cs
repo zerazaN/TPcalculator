@@ -29,11 +29,12 @@
             this.plusButton = new System.Windows.Forms.Button();
             this.minusButton = new System.Windows.Forms.Button();
             this.multiplyButton = new System.Windows.Forms.Button();
-            this.dividedButton = new System.Windows.Forms.Button();
+            this.divideButton = new System.Windows.Forms.Button();
             this.stateNum = new System.Windows.Forms.Label();
             this.statesList = new System.Windows.Forms.ListBox();
             this.undo = new System.Windows.Forms.Button();
             this.repeat = new System.Windows.Forms.Button();
+            this.EmptyButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // workNumBox
@@ -86,15 +87,15 @@
             this.multiplyButton.UseVisualStyleBackColor = true;
             this.multiplyButton.Click += new System.EventHandler(this.multiplyButton_Click);
             // 
-            // dividedButton
+            // divideButton
             // 
-            this.dividedButton.Location = new System.Drawing.Point(415, 131);
-            this.dividedButton.Name = "dividedButton";
-            this.dividedButton.Size = new System.Drawing.Size(75, 23);
-            this.dividedButton.TabIndex = 5;
-            this.dividedButton.Text = "/";
-            this.dividedButton.UseVisualStyleBackColor = true;
-            this.dividedButton.Click += new System.EventHandler(this.divideButton_Click);
+            this.divideButton.Location = new System.Drawing.Point(415, 131);
+            this.divideButton.Name = "divideButton";
+            this.divideButton.Size = new System.Drawing.Size(75, 23);
+            this.divideButton.TabIndex = 5;
+            this.divideButton.Text = "/";
+            this.divideButton.UseVisualStyleBackColor = true;
+            this.divideButton.Click += new System.EventHandler(this.divideButton_Click);
             // 
             // stateNum
             // 
@@ -134,16 +135,27 @@
             this.repeat.UseVisualStyleBackColor = true;
             this.repeat.Click += new System.EventHandler(this.repeat_Click);
             // 
+            // EmptyButton
+            // 
+            this.EmptyButton.Location = new System.Drawing.Point(12, 46);
+            this.EmptyButton.Name = "EmptyButton";
+            this.EmptyButton.Size = new System.Drawing.Size(75, 23);
+            this.EmptyButton.TabIndex = 10;
+            this.EmptyButton.Text = "Original";
+            this.EmptyButton.UseVisualStyleBackColor = true;
+            this.EmptyButton.Visible = false;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(715, 799);
+            this.Controls.Add(this.EmptyButton);
             this.Controls.Add(this.repeat);
             this.Controls.Add(this.undo);
             this.Controls.Add(this.statesList);
             this.Controls.Add(this.stateNum);
-            this.Controls.Add(this.dividedButton);
+            this.Controls.Add(this.divideButton);
             this.Controls.Add(this.multiplyButton);
             this.Controls.Add(this.minusButton);
             this.Controls.Add(this.plusButton);
@@ -164,11 +176,12 @@
         private System.Windows.Forms.Button plusButton;
         private System.Windows.Forms.Button minusButton;
         private System.Windows.Forms.Button multiplyButton;
-        private System.Windows.Forms.Button dividedButton;
+        private System.Windows.Forms.Button divideButton;
         private System.Windows.Forms.Label stateNum;
         private System.Windows.Forms.ListBox statesList;
         private System.Windows.Forms.Button undo;
         private System.Windows.Forms.Button repeat;
+        private System.Windows.Forms.Button EmptyButton;
     }
 }
 

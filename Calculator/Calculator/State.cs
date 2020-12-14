@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,22 +15,22 @@ namespace Calculator
 
         private List<Double> numbers = new List<double>();
         private Double workNum;
-        private String whichWork;
+        private Button lastButton;
 
-        public State(List<Double> numbers, double workNum, String whichWork)
+        public State(List<Double> numbers, double workNum, Button button)
         {
             stateNum = ++states;
             this.workNum = workNum;
-            this.whichWork = whichWork;
+            this.lastButton = button;
             foreach(Double num in numbers)
             {
                 this.numbers.Add(num);
             }
         }
 
-        public String getWhichwork()
+        public Button getLastButton()
         {
-            return whichWork;
+            return lastButton;
         }
 
         public Double getWorkNum()

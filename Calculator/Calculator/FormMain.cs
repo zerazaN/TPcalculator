@@ -17,7 +17,7 @@ namespace Calculator
         private Double workNumber = 0; //число в TextBox
         private List<Double> numberList = new List<Double>() {5, -3, 20.1, -1.3};
         private List<State> states = new List<State>();
-        private String lastAction = "Original";
+        private Button lastButton;
 
         public FormMain()
         {
@@ -26,6 +26,7 @@ namespace Calculator
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            lastButton = EmptyButton;
             format.NumberDecimalSeparator = ".";
             workNumBox.Select();
             labelResult.Text = "";
@@ -34,9 +35,9 @@ namespace Calculator
                 labelResult.Text = labelResult.Text += num.ToString() + "\n";
             }
             SaveState();
-            dividedButton.Enabled = false;
+            divideButton.Enabled = false;
             undo.Enabled = false;
-            repeat.Enabled = true;
+            repeat.Enabled = false;
 
             ////////////////////////////////////TODO: rework
         }
@@ -75,8 +76,8 @@ namespace Calculator
                 else
                     workNumber = Convert.ToDouble(workNumBox.Text, format);
             }
-            if (workNumber == 0) dividedButton.Enabled = false;
-            else dividedButton.Enabled = true;
+            if (workNumber == 0) divideButton.Enabled = false;
+            else divideButton.Enabled = true;
         }
 
 
@@ -109,21 +110,23 @@ namespace Calculator
         {
             if (getCurrentState() < State.states)
                 updateStateList();
-            State state = new State(numberList, workNumber, lastAction);
+            State state = new State(numberList, workNumber, lastButton);
             states.Add(state);
-            statesList.Items.Add(state.stateNum + ")  " + state.getWhichwork() + " " + state.getWorkNum().ToString());
+            statesList.Items.Add(state.stateNum + ")  " + lastButton.Text + " " + state.getWorkNum().ToString());
             stateNum.Text = state.stateNum + "/" + State.states.ToString();
             
         }
 
         private void UpdateState()
         {
+            repeat.Enabled = true;
             labelResult.Text = "";
             foreach (Double num in numberList)
             {
                 labelResult.Text = labelResult.Text += num.ToString() + "\n";
             }
             undo.Enabled = true;
+            statesList.SelectedIndex = getCurrentState() - 1;
             workNumBox.Select();
         }
 
@@ -141,7 +144,7 @@ namespace Calculator
             statesList.Items.Clear();
             foreach(State state in states)
             {
-                statesList.Items.Add(state.stateNum + ")  " + state.getWhichwork() + " " + state.getWorkNum().ToString());
+                statesList.Items.Add(state.stateNum + ")  " + state.getLastButton().Text + " " + state.getWorkNum().ToString());
             }
         }
 
@@ -155,7 +158,7 @@ namespace Calculator
 
         private void plusButton_Click(object sender, EventArgs e)
         {
-            lastAction = "+";
+            lastButton = plusButton;
             for (int i = 0; i < numberList.Count; i++)
             {
                 numberList[i] += workNumber;
@@ -166,7 +169,7 @@ namespace Calculator
 
         private void minusButton_Click(object sender, EventArgs e)
         {
-            lastAction = "-";
+            lastButton = minusButton;
             for (int i = 0; i < numberList.Count; i++)
             {
                 numberList[i] -= workNumber;
@@ -177,7 +180,7 @@ namespace Calculator
 
         private void multiplyButton_Click(object sender, EventArgs e)
         {
-            lastAction = "*";
+            lastButton = multiplyButton;
             for (int i = 0; i < numberList.Count; i++)
             {
                 numberList[i] *= workNumber;
@@ -188,7 +191,7 @@ namespace Calculator
 
         private void divideButton_Click(object sender, EventArgs e)
         {
-            lastAction = "/";
+            lastButton = divideButton;
             for (int i = 0; i < numberList.Count; i++)
             {
                 numberList[i] /= workNumber;
@@ -206,7 +209,14 @@ namespace Calculator
 
         private void repeat_Click(object sender, EventArgs e)
         {
+            if(getCurrentState() < State.states)
             LoadState(states[getCurrentState()]);
+            else
+            {
+                workNumBox.Text = states[getCurrentState() - 1].getWorkNum().ToString();
+                states[getCurrentState() - 1].getLastButton().PerformClick();
+                statesList.SelectedIndex = getCurrentState() - 1;
+            }
         }
     }
 }
