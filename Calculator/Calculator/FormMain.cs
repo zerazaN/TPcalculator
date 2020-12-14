@@ -15,6 +15,7 @@ namespace Calculator
     {
         private NumberFormatInfo format = new NumberFormatInfo();
         private Double workNumber = 0; //число в TextBox
+        private Double newNumber = 0;
         private List<Double> numberList = new List<Double>() {5, -3, 20.1, -1.3};
         private List<State> states = new List<State>();
         private Button lastButton;
@@ -26,23 +27,25 @@ namespace Calculator
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            lastButton = EmptyButton;
             format.NumberDecimalSeparator = ".";
+            Start();
+            ////////////////////////////////////TODO: rework
+        }
+
+        private void Start()
+        {
+            State.states = 0;
+            states.Clear();
+            statesList.Items.Clear();
+            lastButton = EmptyButton;
             workNumBox.Select();
-            labelResult.Text = "";
-            foreach (Double num in numberList)
-            {
-                labelResult.Text = labelResult.Text += num.ToString() + "\n";
-            }
+            UpdateResult();
             SaveState();
             divideButton.Enabled = false;
             undo.Enabled = false;
             repeat.Enabled = false;
-
-            ////////////////////////////////////TODO: rework
         }
-
-        /////////////////////////////TEXTCHANGE///////////////////////////////
+        /////////////////////////////TEXTINPUT///////////////////////////////
 
         private void workNumBox_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -80,7 +83,48 @@ namespace Calculator
             else divideButton.Enabled = true;
         }
 
+        private void addNumber_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+                (e.KeyChar != '.') && (e.KeyChar != '-'))
+            {
+                e.Handled = true;
+            }
 
+            if ((e.KeyChar == '.') && (((sender as TextBox).Text.IndexOf('.') > -1) ||
+                (sender as TextBox).Text.Trim() == "" || (sender as TextBox).Text.Trim() == "-"))
+            {
+                e.Handled = true;
+            }
+
+            if ((e.KeyChar == '-') && ((sender as TextBox).Text.Trim() != ""))
+            {
+                e.Handled = true;
+            }
+
+        }
+        private void addNumber_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Return)
+            {
+                addButton.PerformClick();
+                e.Handled = true;
+            }
+        }
+
+        private void addNumber_TextChanged(object sender, EventArgs e)
+        {
+            if (addNumber.Text.Trim() == "" || addNumber.Text == "-")
+                newNumber = 0;
+            else
+            {
+                if (addNumber.Text[addNumber.TextLength - 1] == '.')
+                    newNumber = Convert.ToDouble(addNumber.Text.Substring(0, addNumber.TextLength - 1));
+                else
+                    newNumber = Convert.ToDouble(addNumber.Text, format);
+            }
+        }
         /////////////////////////////STATE/////////////////////////
         private void LoadState(State state)
         {
@@ -92,24 +136,19 @@ namespace Calculator
                 numberList.Add(num);
             }
             
-
-            labelResult.Text = "";
-            foreach (Double num in numberList)
-            {
-                labelResult.Text = labelResult.Text += num.ToString() + "\n";
-            }
+            UpdateResult();
             if (state.stateNum == 1)
                 undo.Enabled = false;
             else undo.Enabled = true;
-            statesList.SelectedIndex = getCurrentState() - 1;
+            statesList.SelectedIndex = GetCurrentState() - 1;
             workNumBox.Select();
         }
 
 
         private void SaveState()
         {
-            if (getCurrentState() < State.states)
-                updateStateList();
+            if (GetCurrentState() < State.states)
+                UpdateStateList();
             State state = new State(numberList, workNumber, lastButton);
             states.Add(state);
             statesList.Items.Add(state.stateNum + ")  " + lastButton.Text + " " + state.getWorkNum().ToString());
@@ -120,27 +159,32 @@ namespace Calculator
         private void UpdateState()
         {
             repeat.Enabled = true;
-            labelResult.Text = "";
-            foreach (Double num in numberList)
-            {
-                labelResult.Text = labelResult.Text += num.ToString() + "\n";
-            }
+            UpdateResult();
             undo.Enabled = true;
-            statesList.SelectedIndex = getCurrentState() - 1;
+            statesList.SelectedIndex = GetCurrentState() - 1;
             workNumBox.Select();
+        }
+
+        private void UpdateState_input()
+        {
+            if (numberList.Count == 0)
+                DisableButtons();
+            else EnableButtons();
+            UpdateResult();
         }
 
         ///////////////////////////////////STATELIST/////////////////////////////////////
 
         private void statesList_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if(statesList.SelectedIndex >= 0)
             LoadState(states[statesList.SelectedIndex]);
         }
 
-        private void updateStateList()
+        private void UpdateStateList()
         {
-            states.RemoveRange(getCurrentState(), State.states - getCurrentState());
-            State.states = getCurrentState();
+            states.RemoveRange(GetCurrentState(), State.states - GetCurrentState());
+            State.states = GetCurrentState();
             statesList.Items.Clear();
             foreach(State state in states)
             {
@@ -148,13 +192,40 @@ namespace Calculator
             }
         }
 
-        private int getCurrentState()
+        private int GetCurrentState()
         {
             String stateNumText = stateNum.Text.Substring(0, stateNum.Text.IndexOf("/"));
             int stateNumInt = Convert.ToInt32(stateNumText);
             return stateNumInt;
         }
-        ///////////////////////////////////////////BUTTONS////////////////////////////////////////////
+
+        ///////////////////////////////////////////NUMBERSLIST/////////////////////////////////////////
+        private void UpdateResult()
+        {
+            numbersListBox.Items.Clear();
+            foreach (Double num in numberList)
+            {
+                numbersListBox.Items.Add(num);
+            }
+            numbersListBox.SelectedIndex = numberList.Count - 1;
+        }
+        ///////////////////////////////////////////MATHBUTTONS////////////////////////////////////////////
+        private void DisableButtons()
+        {
+            plusButton.Enabled = false;
+            minusButton.Enabled = false;
+            multiplyButton.Enabled = false;
+            divideButton.Enabled = false;
+        }
+
+        private void EnableButtons()
+        {
+            plusButton.Enabled = true;
+            minusButton.Enabled = true;
+            multiplyButton.Enabled = true;
+            if(workNumber != 0)
+            divideButton.Enabled = false;
+        }
 
         private void plusButton_Click(object sender, EventArgs e)
         {
@@ -199,24 +270,78 @@ namespace Calculator
             SaveState();
             UpdateState();
         }
-        
-        
+
+        ///////////////////////////////////////////STATEBUTTONS////////////////////////////////////////////
 
         private void undo_Click(object sender, EventArgs e)
         {
-            LoadState(states[getCurrentState() - 2]);
+            LoadState(states[GetCurrentState() - 2]);
         }
 
         private void repeat_Click(object sender, EventArgs e)
         {
-            if(getCurrentState() < State.states)
-            LoadState(states[getCurrentState()]);
+            if(GetCurrentState() < State.states)
+            LoadState(states[GetCurrentState()]);
             else
             {
-                workNumBox.Text = states[getCurrentState() - 1].getWorkNum().ToString();
-                states[getCurrentState() - 1].getLastButton().PerformClick();
-                statesList.SelectedIndex = getCurrentState() - 1;
+                workNumBox.Text = states[GetCurrentState() - 1].getWorkNum().ToString();
+                states[GetCurrentState() - 1].getLastButton().PerformClick();
+                statesList.SelectedIndex = GetCurrentState() - 1;
             }
+        }
+
+        ///////////////////////////////////////////LISTBUTTONS////////////////////////////////////////////
+        private void deleteAllButton_Click(object sender, EventArgs e)
+        {
+            numberList.Clear();
+            UpdateState_input();
+        }
+
+        private void deleteLastButton_Click(object sender, EventArgs e)
+        {
+            if(numberList.Count != 0)
+            numberList.RemoveAt(numberList.Count - 1);
+            UpdateState_input();
+        }
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+            numberList.Add(newNumber);
+            UpdateState_input();
+            addNumber.Select();
+        }
+
+
+
+        ////////////////////////////////////////////MENUFILES/////////////////////////////////////////////
+        private void menu_Save_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = saveFileDialog.FileName;
+            string output = "";
+            foreach(Double num in numberList)
+            {
+                output += num + "|";
+            }
+            output = output.Substring(0, output.Length - 1);
+            System.IO.File.WriteAllText(filename, output);
+        }
+
+        private void menu_Load_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = openFileDialog.FileName;
+            string fileText = System.IO.File.ReadAllText(filename);
+            numberList.Clear();
+            if(fileText != "")
+            foreach(string num in fileText.Split('|'))
+            {
+                numberList.Add(Convert.ToDouble(num));
+            }
+            UpdateState_input();
+            Start();
         }
     }
 }
