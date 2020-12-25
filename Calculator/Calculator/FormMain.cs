@@ -42,10 +42,10 @@ namespace Calculator
             UpdateResult();
             SaveState();
             divideButton.Enabled = false;
-            undo.Enabled = false;
-            repeat.Enabled = false;
+            undoButton.Enabled = false;
+            repeatButton.Enabled = false;
         }
-        /////////////////////////////TEXTINPUT///////////////////////////////
+        /////////////////////////////TEXTINPUT//////////////////////////////////////////////////////////////
 
         private void workNumBox_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -104,6 +104,7 @@ namespace Calculator
             }
 
         }
+
         private void addNumber_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Return)
@@ -125,7 +126,9 @@ namespace Calculator
                     newNumber = Convert.ToDouble(addNumber.Text, format);
             }
         }
-        /////////////////////////////STATE/////////////////////////
+
+        /////////////////////////////STATE/////////////////////////////////////////////////////////////////
+
         private void LoadState(State state)
         {
             stateNum.Text = state.stateNum + "/" + State.states.ToString();
@@ -138,12 +141,11 @@ namespace Calculator
             
             UpdateResult();
             if (state.stateNum == 1)
-                undo.Enabled = false;
-            else undo.Enabled = true;
+                undoButton.Enabled = false;
+            else undoButton.Enabled = true;
             statesList.SelectedIndex = GetCurrentState() - 1;
             workNumBox.Select();
         }
-
 
         private void SaveState()
         {
@@ -158,9 +160,9 @@ namespace Calculator
 
         private void UpdateState()
         {
-            repeat.Enabled = true;
+            repeatButton.Enabled = true;
             UpdateResult();
-            undo.Enabled = true;
+            undoButton.Enabled = true;
             statesList.SelectedIndex = GetCurrentState() - 1;
             workNumBox.Select();
         }
@@ -171,9 +173,10 @@ namespace Calculator
                 DisableButtons();
             else EnableButtons();
             UpdateResult();
+            addNumber.Select();
         }
 
-        ///////////////////////////////////STATELIST/////////////////////////////////////
+        ///////////////////////////////////STATELIST///////////////////////////////////////////////////////
 
         private void statesList_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -199,32 +202,41 @@ namespace Calculator
             return stateNumInt;
         }
 
-        ///////////////////////////////////////////NUMBERSLIST/////////////////////////////////////////
-        private void UpdateResult()
-        {
-            numbersListBox.Items.Clear();
-            foreach (Double num in numberList)
-            {
-                numbersListBox.Items.Add(num);
-            }
-            numbersListBox.SelectedIndex = numberList.Count - 1;
-        }
         ///////////////////////////////////////////MATHBUTTONS////////////////////////////////////////////
+
         private void DisableButtons()
         {
+            repeatButton.Enabled = false;
             plusButton.Enabled = false;
             minusButton.Enabled = false;
             multiplyButton.Enabled = false;
             divideButton.Enabled = false;
+            squareButton.Enabled = false;
+            powerNButton.Enabled = false;
+            rootButton.Enabled = false;
+            rootButton.Enabled = false;
+            logNButton.Enabled = false;
+            factButton.Enabled = false;
+            medianaButton.Enabled = false;
+            standartDeviationButton.Enabled = false;
         }
 
         private void EnableButtons()
         {
+            repeatButton.Enabled = false;
             plusButton.Enabled = true;
             minusButton.Enabled = true;
             multiplyButton.Enabled = true;
             if(workNumber != 0)
-            divideButton.Enabled = false;
+            divideButton.Enabled = true;
+            squareButton.Enabled = true;
+            powerNButton.Enabled = true;
+            rootButton.Enabled = true;
+            rootNButton.Enabled = true;
+            logNButton.Enabled = true;
+            factButton.Enabled = true;
+            medianaButton.Enabled = true;
+            standartDeviationButton.Enabled = true;
         }
 
         private void plusButton_Click(object sender, EventArgs e)
@@ -271,14 +283,120 @@ namespace Calculator
             UpdateState();
         }
 
+        private void squareButton_Click(object sender, EventArgs e)
+        {
+            lastButton = squareButton;
+            for (int i = 0; i < numberList.Count; i++)
+            {
+                numberList[i] = Math.Pow(numberList[i], 2);
+            }
+            SaveState();
+            UpdateState();
+        }
+
+        private void powerNButton_Click(object sender, EventArgs e)
+        {
+            lastButton = powerNButton;
+            for (int i = 0; i < numberList.Count; i++)
+            {
+                numberList[i] = Math.Pow(numberList[i], workNumber);
+            }
+            SaveState();
+            UpdateState();
+        }
+
+        private void rootNButton_Click(object sender, EventArgs e)
+        {
+            lastButton = rootButton;
+            for (int i = 0; i < numberList.Count; i++)
+            {
+                numberList[i] = Math.Pow(numberList[i], 1/workNumber);
+            }
+            SaveState();
+            UpdateState();
+        }
+
+        private void rootButton_Click(object sender, EventArgs e)
+        {
+            lastButton = rootNButton;
+            for (int i = 0; i < numberList.Count; i++)
+            {
+                numberList[i] = Math.Pow(numberList[i], 0.5);
+            }
+            SaveState();
+            UpdateState();
+        }
+
+        private void logNButton_Click(object sender, EventArgs e)
+        {
+            lastButton = logNButton;
+            for (int i = 0; i < numberList.Count; i++)
+            {
+                numberList[i] = Math.Log(numberList[i], workNumber);
+            }
+            SaveState();
+            UpdateState();
+        }
+
+        private void factButton_Click(object sender, EventArgs e)
+        {
+            lastButton = factButton;
+            for (int i = 0; i < numberList.Count; i++)
+            {
+                if (Math.Truncate(numberList[i]).Equals(numberList[i]) && numberList[i] >= 0)
+                    numberList[i] = Factorial(numberList[i]);
+            }
+            SaveState();
+            UpdateState();
+        }
+
+        private void medianaButton_Click(object sender, EventArgs e)
+        {
+            lastButton = medianaButton;
+            numberList.Sort();
+            double result;
+            if (numberList.Count % 2 == 0)
+            {
+                result = (numberList[numberList.Count / 2] +
+                    numberList[numberList.Count / 2 - 1]) / 2;
+            }
+            else
+            {
+                result = numberList[Convert.ToInt32(Math.Truncate((double)(numberList.Count / 2)))];
+            }
+            numberList.Clear();
+            numberList.Add(result);
+            SaveState();
+            UpdateState();
+        }
+
+        private void standartDeviationButton_Click(object sender, EventArgs e)
+        {
+            lastButton = standartDeviationButton;
+            double result = 0;
+            double average = numberList.Average();
+            for (int i = 0; i < numberList.Count; i++)
+            {
+                numberList[i] -= average;
+                numberList[i] = Math.Pow(numberList[i], 2);
+                result += numberList[i];
+            }
+            result /= numberList.Count - 1;
+            result = Math.Pow(result, 0.5);
+            numberList.Clear();
+            numberList.Add(result);
+            SaveState();
+            UpdateState();
+        }
+
         ///////////////////////////////////////////STATEBUTTONS////////////////////////////////////////////
 
-        private void undo_Click(object sender, EventArgs e)
+        private void undoButton_Click(object sender, EventArgs e)
         {
             LoadState(states[GetCurrentState() - 2]);
         }
 
-        private void repeat_Click(object sender, EventArgs e)
+        private void repeatButton_Click(object sender, EventArgs e)
         {
             if(GetCurrentState() < State.states)
             LoadState(states[GetCurrentState()]);
@@ -290,7 +408,20 @@ namespace Calculator
             }
         }
 
+        ///////////////////////////////////////////NUMBERSLIST////////////////////////////////////////////
+
+        private void UpdateResult()
+        {
+            numbersListBox.Items.Clear();
+            foreach (Double num in numberList)
+            {
+                numbersListBox.Items.Add(num);
+            }
+            numbersListBox.SelectedIndex = numberList.Count - 1;
+        }
+
         ///////////////////////////////////////////LISTBUTTONS////////////////////////////////////////////
+
         private void deleteAllButton_Click(object sender, EventArgs e)
         {
             numberList.Clear();
@@ -308,12 +439,11 @@ namespace Calculator
         {
             numberList.Add(newNumber);
             UpdateState_input();
-            addNumber.Select();
         }
 
 
-
         ////////////////////////////////////////////MENUFILES/////////////////////////////////////////////
+
         private void menu_Save_Click(object sender, EventArgs e)
         {
             if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
@@ -343,5 +473,14 @@ namespace Calculator
             UpdateState_input();
             Start();
         }
+
+        private double Factorial(double num)
+        {
+            if (num == 1 || num == 0)
+                return 1;
+            else
+                return num * Factorial(num - 1);
+        }
+
     }
 }
