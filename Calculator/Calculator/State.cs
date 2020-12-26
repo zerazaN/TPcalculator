@@ -14,7 +14,9 @@ namespace Calculator
         public int stateNum;
 
         private List<Double> numbers = new List<double>();
+
         private Double workNum;
+
         private Button lastButton;
 
         public State(List<Double> numbers, double workNum, Button button)

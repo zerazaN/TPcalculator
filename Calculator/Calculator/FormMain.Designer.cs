@@ -53,6 +53,10 @@
             this.medianaButton = new System.Windows.Forms.Button();
             this.standartDeviationButton = new System.Windows.Forms.Button();
             this.rootNButton = new System.Windows.Forms.Button();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.progressTextLabel = new System.Windows.Forms.Label();
+            this.loadBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -329,11 +333,42 @@
             this.rootNButton.UseVisualStyleBackColor = true;
             this.rootNButton.Click += new System.EventHandler(this.rootNButton_Click);
             // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.WorkerReportsProgress = true;
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(0, 229);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(318, 23);
+            this.progressBar.TabIndex = 25;
+            // 
+            // progressTextLabel
+            // 
+            this.progressTextLabel.AutoSize = true;
+            this.progressTextLabel.Location = new System.Drawing.Point(146, 213);
+            this.progressTextLabel.Name = "progressTextLabel";
+            this.progressTextLabel.Size = new System.Drawing.Size(0, 13);
+            this.progressTextLabel.TabIndex = 26;
+            // 
+            // loadBackgroundWorker
+            // 
+            this.loadBackgroundWorker.WorkerReportsProgress = true;
+            this.loadBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.loadBackgroundWorker_DoWork);
+            this.loadBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.loadBackgroundWorker_ProgressChanged);
+            this.loadBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.loadBackgroundWorker_RunWorkerCompleted);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(318, 525);
+            this.Controls.Add(this.progressTextLabel);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.rootNButton);
             this.Controls.Add(this.standartDeviationButton);
             this.Controls.Add(this.medianaButton);
@@ -401,6 +436,10 @@
         private System.Windows.Forms.Button medianaButton;
         private System.Windows.Forms.Button standartDeviationButton;
         private System.Windows.Forms.Button rootNButton;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label progressTextLabel;
+        private System.ComponentModel.BackgroundWorker loadBackgroundWorker;
     }
 }
 

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Calculator
@@ -15,10 +11,11 @@ namespace Calculator
     {
         private NumberFormatInfo format = new NumberFormatInfo();
         private Double workNumber = 0; //число в TextBox
-        private Double newNumber = 0;
-        private List<Double> numberList = new List<Double>() {5, -3, 20.1, -1.3};
+        private Double newNumber = 0; //число над List
+        private List<Double> numberList = new List<Double>();
         private List<State> states = new List<State>();
         private Button lastButton;
+        private Boolean freeze = false;
 
         public FormMain()
         {
@@ -29,22 +26,16 @@ namespace Calculator
         {
             format.NumberDecimalSeparator = ".";
             Start();
-            ////////////////////////////////////TODO: rework
         }
 
         private void Start()
         {
-            State.states = 0;
-            states.Clear();
             statesList.Items.Clear();
             lastButton = EmptyButton;
             workNumBox.Select();
-            UpdateResult();
-            SaveState();
-            divideButton.Enabled = false;
-            undoButton.Enabled = false;
-            repeatButton.Enabled = false;
+            UpdateState_input();
         }
+
         /////////////////////////////TEXTINPUT//////////////////////////////////////////////////////////////
 
         private void workNumBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -70,6 +61,8 @@ namespace Calculator
 
         private void workNumBox_TextChanged(object sender, EventArgs e)
         {
+            if (freeze)
+                return;
             if (workNumBox.Text.Trim() == "" || workNumBox.Text == "-")
                 workNumber = 0;
             else
@@ -107,6 +100,8 @@ namespace Calculator
 
         private void addNumber_KeyUp(object sender, KeyEventArgs e)
         {
+            if (freeze)
+                return;
             if (e.KeyData == Keys.Return)
             {
                 addButton.PerformClick();
@@ -116,6 +111,8 @@ namespace Calculator
 
         private void addNumber_TextChanged(object sender, EventArgs e)
         {
+            if (freeze)
+                return;
             if (addNumber.Text.Trim() == "" || addNumber.Text == "-")
                 newNumber = 0;
             else
@@ -206,6 +203,7 @@ namespace Calculator
 
         private void DisableButtons()
         {
+            undoButton.Enabled = false;
             repeatButton.Enabled = false;
             plusButton.Enabled = false;
             minusButton.Enabled = false;
@@ -214,13 +212,14 @@ namespace Calculator
             squareButton.Enabled = false;
             powerNButton.Enabled = false;
             rootButton.Enabled = false;
-            rootButton.Enabled = false;
+            rootNButton.Enabled = false;
             logNButton.Enabled = false;
             factButton.Enabled = false;
             medianaButton.Enabled = false;
             standartDeviationButton.Enabled = false;
+            menu_Save.Enabled = false;
         }
-
+        
         private void EnableButtons()
         {
             repeatButton.Enabled = false;
@@ -237,156 +236,123 @@ namespace Calculator
             factButton.Enabled = true;
             medianaButton.Enabled = true;
             standartDeviationButton.Enabled = true;
+            menu_Save.Enabled = true;
         }
 
         private void plusButton_Click(object sender, EventArgs e)
         {
             lastButton = plusButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] += workNumber;
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void minusButton_Click(object sender, EventArgs e)
         {
             lastButton = minusButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] -= workNumber;
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void multiplyButton_Click(object sender, EventArgs e)
         {
             lastButton = multiplyButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] *= workNumber;
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void divideButton_Click(object sender, EventArgs e)
         {
             lastButton = divideButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] /= workNumber;
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void squareButton_Click(object sender, EventArgs e)
         {
             lastButton = squareButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] = Math.Pow(numberList[i], 2);
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void powerNButton_Click(object sender, EventArgs e)
         {
             lastButton = powerNButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] = Math.Pow(numberList[i], workNumber);
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void rootNButton_Click(object sender, EventArgs e)
         {
             lastButton = rootButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] = Math.Pow(numberList[i], 1/workNumber);
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void rootButton_Click(object sender, EventArgs e)
         {
             lastButton = rootNButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] = Math.Pow(numberList[i], 0.5);
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void logNButton_Click(object sender, EventArgs e)
         {
             lastButton = logNButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] = Math.Log(numberList[i], workNumber);
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void factButton_Click(object sender, EventArgs e)
         {
             lastButton = factButton;
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                if (Math.Truncate(numberList[i]).Equals(numberList[i]) && numberList[i] >= 0)
-                    numberList[i] = Factorial(numberList[i]);
-            }
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void medianaButton_Click(object sender, EventArgs e)
         {
             lastButton = medianaButton;
-            numberList.Sort();
-            double result;
-            if (numberList.Count % 2 == 0)
-            {
-                result = (numberList[numberList.Count / 2] +
-                    numberList[numberList.Count / 2 - 1]) / 2;
-            }
-            else
-            {
-                result = numberList[Convert.ToInt32(Math.Truncate((double)(numberList.Count / 2)))];
-            }
-            numberList.Clear();
-            numberList.Add(result);
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void standartDeviationButton_Click(object sender, EventArgs e)
         {
             lastButton = standartDeviationButton;
-            double result = 0;
-            double average = numberList.Average();
-            for (int i = 0; i < numberList.Count; i++)
-            {
-                numberList[i] -= average;
-                numberList[i] = Math.Pow(numberList[i], 2);
-                result += numberList[i];
-            }
-            result /= numberList.Count - 1;
-            result = Math.Pow(result, 0.5);
-            numberList.Clear();
-            numberList.Add(result);
-            SaveState();
-            UpdateState();
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            backgroundWorker.RunWorkerAsync();
+        }
+
+        private double Factorial(double num)
+        {
+            if (num == 1 || num == 0)
+                return 1;
+            else
+                return num * Factorial(num - 1);
         }
 
         ///////////////////////////////////////////STATEBUTTONS////////////////////////////////////////////
@@ -441,8 +407,25 @@ namespace Calculator
             UpdateState_input();
         }
 
+        private void DisableListButtons()
+        {
+            statesList.Enabled = false;
+            addButton.Enabled = false;
+            deleteAllButton.Enabled = false;
+            deleteLastButton.Enabled = false;
+            menu_Load.Enabled = false;
+        }
 
+        private void EnableListButtons()
+        {
+            statesList.Enabled = true;
+            addButton.Enabled = true;
+            deleteAllButton.Enabled = true;
+            deleteLastButton.Enabled = true;
+            menu_Load.Enabled = true;
+        }
         ////////////////////////////////////////////MENUFILES/////////////////////////////////////////////
+
 
         private void menu_Save_Click(object sender, EventArgs e)
         {
@@ -460,27 +443,215 @@ namespace Calculator
 
         private void menu_Load_Click(object sender, EventArgs e)
         {
+            progressBar.Style = ProgressBarStyle.Marquee;
             if (openFileDialog.ShowDialog() == DialogResult.Cancel)
                 return;
+            freeze = true;
+            DisableButtons();
+            DisableListButtons();
+            loadBackgroundWorker.RunWorkerAsync();
+            
+        }
+
+        //////////////////////////////////////BGWORK////////////////////////////////////////////////////
+            
+
+        private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+             switch (lastButton.Name)
+            {
+                case "plusButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] += workNumber;
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "minusButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] -= workNumber;
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "multiplyButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] *= workNumber;
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "divideButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] /= workNumber;
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "squareButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] = Math.Pow(numberList[i], 2);
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "powerNButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] = Math.Pow(numberList[i], workNumber);
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "rootNButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] = Math.Pow(numberList[i], 1 / workNumber);
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "rootButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] = Math.Pow(numberList[i], 0.5);
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "logNButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] = Math.Log(numberList[i], workNumber);
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "factButton":
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        if (Math.Truncate(numberList[i]).Equals(numberList[i]) && numberList[i] >= 0)
+                            numberList[i] = Factorial(numberList[i]);
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    break;
+                case "medianaButton":
+                    numberList.Sort();
+                    double result;
+                    backgroundWorker.ReportProgress(50);
+                    if (numberList.Count % 2 == 0)
+                    {
+                        result = (numberList[numberList.Count / 2] +
+                            numberList[numberList.Count / 2 - 1]) / 2;
+                    }
+                    else
+                    {
+                        result = numberList[Convert.ToInt32(Math.Truncate((double)(numberList.Count / 2)))];
+                    }
+                    numberList.Clear();
+                    numberList.Add(result);
+                    break;
+                case "standartDeviationButton":
+                    double resultD = 0;
+                    double average = numberList.Average();
+                    for (int i = 0; i < numberList.Count; i++)
+                    {
+                        Thread.Sleep(1);
+                        numberList[i] -= average;
+                        numberList[i] = Math.Pow(numberList[i], 2);
+                        resultD += numberList[i];
+                        backgroundWorker.ReportProgress(Convert.ToInt32(((double)i / numberList.Count) * 100));
+                    }
+                    resultD /= numberList.Count - 1;
+                    resultD = Math.Pow(resultD, 0.5);
+                    numberList.Clear();
+                    numberList.Add(resultD);
+                    break;
+            }
+        }
+        
+        private void backgroundWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            EnableButtons();
+            EnableListButtons();
+            freeze = false;
+            SaveState();
+            UpdateState();
+            progressBar.Value = 100;
+            progressTextLabel.Text = "";
+            //
+            if (workNumBox.Text.Trim() == "" || workNumBox.Text == "-")
+                workNumber = 0;
+            else
+            {
+                if (workNumBox.Text[workNumBox.TextLength - 1] == '.')
+                    workNumber = Convert.ToDouble(workNumBox.Text.Substring(0, workNumBox.TextLength - 1));
+                else
+                    workNumber = Convert.ToDouble(workNumBox.Text, format);
+            }
+            if (workNumber == 0) divideButton.Enabled = false;
+            else divideButton.Enabled = true;
+            //
+            //
+            if (addNumber.Text.Trim() == "" || addNumber.Text == "-")
+                newNumber = 0;
+            else
+            {
+                if (addNumber.Text[addNumber.TextLength - 1] == '.')
+                    newNumber = Convert.ToDouble(addNumber.Text.Substring(0, addNumber.TextLength - 1));
+                else
+                    newNumber = Convert.ToDouble(addNumber.Text, format);
+            }
+            //
+        }
+
+        private void backgroundWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            progressBar.Value = e.ProgressPercentage;
+            progressTextLabel.Text = e.ProgressPercentage + "%";
+        }
+
+        ///////////////////////////////////BGLOAD///////////////////////////////////////////////////////
+
+        private void loadBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
             string filename = openFileDialog.FileName;
             string fileText = System.IO.File.ReadAllText(filename);
             numberList.Clear();
-            if(fileText != "")
-            foreach(string num in fileText.Split('|'))
-            {
-                numberList.Add(Convert.ToDouble(num));
-            }
-            UpdateState_input();
-            Start();
+            int i = 0;
+            if (fileText != "")
+                foreach (string num in fileText.Split('|'))
+                {
+                    numberList.Add(Convert.ToDouble(num));
+                    Thread.Sleep(1);
+                    loadBackgroundWorker.ReportProgress(i, num);
+                    i = i == 100 ? 0 : i + 1;
+                }
         }
 
-        private double Factorial(double num)
+        private void loadBackgroundWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            if (num == 1 || num == 0)
-                return 1;
-            else
-                return num * Factorial(num - 1);
+            progressTextLabel.Text = "Added : " + e.UserState;
         }
 
+        private void loadBackgroundWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            progressBar.Value = 100;
+            progressTextLabel.Text = "";
+            EnableButtons();
+            EnableListButtons();
+            freeze = false;
+            lastButton = EmptyButton;
+            workNumber = 0;
+            SaveState();
+            UpdateState_input();
+            progressBar.Style = ProgressBarStyle.Blocks;
+        }
     }
 }
